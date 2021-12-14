@@ -27,12 +27,10 @@ def display_text(stdscr, key, target_text, row, column, index, redo, wpm=0):
             stdscr.addstr(row, column, key, curses.color_pair(2))
 
 def wpm_test(stdscr):
-    display_message = "Start typing the below line of code\n"
-    # target_text = "Type Hello world!"
+    display_message = "Start typing the below line of code. Press @ to exit\n"
+    # example target_text = "Type Hello world!"
     target_text = load_text()
-    #stdscr.addstr(1,0, " ")
     text_list = []
-    speed_test_list = []
     stdscr.clear()
     stdscr.addstr(display_message)
     stdscr.addstr(target_text)
@@ -51,16 +49,17 @@ def wpm_test(stdscr):
     start_time = time.time()
     while True:
         key = stdscr.getkey()
-        time_elapsed = max(time.time() - start_time, 1)
-        wpm = round((len(text_list) / (time_elapsed / 60)) / 5)
-        speed_test_list.append(key) # used to store all chars entered by user for calculating typing speed
+        time_elapsed = max(time.time() - start_time, 1) # max to make sure value is not zero
+        wpm = round((len(text_list) / (time_elapsed / 60)) / 5) # formula for WPM
         text_list.append(key)
+        # if key is a BACKSPACE
         if key in ("KEY_BACKSPACE", '\b', "\x7f"):
+            # also text_list is not empty
             if len(text_list) > 0:
-                text_list.pop()
-                column -= 1
-                index -= 1
-                size_target_text += 1
+                text_list.pop() # pop the char
+                column -= 1 # bring cursor one space back
+                index -= 1  # decrement the index for target text
+                size_target_text += 1   # the size of target text increases, since one space is cleared
                 display_text(stdscr, key=target_text[index], target_text=target_text, row=row, column=column, index=index, redo=True, wpm=wpm)
 
         else:
@@ -69,14 +68,14 @@ def wpm_test(stdscr):
             index += 1
             size_target_text -= 1
             if (size_target_text == 0):
-                break
+                return f"WPM: {wpm}"
         if key == "@":
             break
 
+# main fucnction calling all other functions
 def main(stdscr):
     start_screen(stdscr)
-    wpm_test(stdscr)
+    print(wpm_test(stdscr))
     
 
 wrapper(main)
-# print(display_text())

@@ -1,1 +1,1 @@
-# Type Racer - Program that tests you typing speed!
+# Type Racer - Program that tests your typing speed!
